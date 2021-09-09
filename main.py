@@ -12,31 +12,20 @@ def csv_a():
 
     with open(file_name, "a", newline ="") as csvfile:
         writer = csv.writer(csvfile)
-        check = True
 
-        for account in Accounts.account_list:
-            if account.name == name_input:
-                check = False
-
-        while check:
-            generate_no()
-            writer.writerow([name_input, pin_input, card_no, 0])
-            break
+        generate_no()
+        writer.writerow([name_input, pin_input, card_no, 0])
 
 def csv_update():
-    with open(file_name, "r") as csvfile:
-        reader = csv.reader(csvfile)
 
-        with open(file_name, "w", newline="") as csvfile:
-            csvwriter = csv.writer(csvfile, delimiter=',')
-            for i in Accounts.account_list:
-                csvwriter.writerow([i.name, i.pin, i.card_no, i.balance])
+    with open(file_name, "w", newline="") as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',')
 
-        del Accounts.account_list[:]
-        for row in reader:
-            Accounts(row[0], row[1], int(row[2]), int(row[3]))
+        for i in Accounts.account_list:
+            csvwriter.writerow([i.name, i.pin, i.card_no, i.balance])
 
-def csv_son_care():
+
+def csv_open_create():
     with open(file_name, "r") as csvfile:
         reader = csv.reader(csvfile)
 
@@ -56,19 +45,19 @@ def first_menu():
     global name_input
     global pin_input
 
-    csv_son_care()
+    csv_open_create()
 
     while True:
 
         print("1. Create an account\n"
               "2. Log into account\n"
-              "0. Exit")
+              "0. Exit\n")
 
         main_menu_input = str(input())
 
         if main_menu_input == "1":
 
-            name_input = str(input("Please write your name :"))
+            name_input = str(input("Please write your name: "))
             pin_input = str(input("Please write a pin :").rstrip().lstrip())
 
             if name_input in Accounts.account_dict:
@@ -78,10 +67,10 @@ def first_menu():
 
             else:
                 csv_a()
-                csv_son_care()
-                csv_update()
-                text = "You created an account. Your generated card number is {0}. Please note that and do not share with anyone."
-                print(Accounts.account_list)
+                csv_open_create()
+
+                text = "\nYou created an account. Your generated card number is {0}. Please note that and do not share it with anyone. \n"
+
                 print(text.format(Accounts.account_list[-1].card_no, "\n"))
 
                 second_menu()
@@ -93,15 +82,15 @@ def first_menu():
             while_breaker = True
             while while_breaker:
 
-                name_input = str(input("Please write your name :"))
-                pin_input = str(input("Please write pin :"))
+                name_input = str(input("Please write your name: "))
+                pin_input = str(input("Please write pin: "))
 
                 check_name_pin = False
 
                 for i in Accounts.account_list:
 
                     if i.name == name_input and i.pin == pin_input:
-                        print("You are logged into the account.\n ")
+                        print("\nYou are logged into the account.\n ")
                         check_name_pin = True
                         second_menu()
                         while_breaker = False
@@ -116,7 +105,7 @@ def first_menu():
             exit()
 
         else:
-            print("Please insert 0,1 or 2 :")
+            print("Please insert 0,1 or 2 : \n")
 
 def second_menu():
     while True:
@@ -155,7 +144,7 @@ def show_balance():
 
 def add_income():
 
-    add_money_amount = int(input("How much money do you want to add?: "))
+    add_money_amount = int(input("How much money do you want to add?: \n"))
     Accounts.account_dict[name_input].balance += add_money_amount
     text = "{0} dolars are added to your account. New balance is {1} dolars.\n"
     print(text.format(add_money_amount, Accounts.account_dict[name_input].balance))
@@ -164,7 +153,7 @@ def add_income():
 def money_transfer():
     while True:
 
-        user_card_no = int(input("Please insert the card no of yourself: "))
+        user_card_no = int(input("Please insert the card no of yourself: \n"))
 
         if user_card_no != Accounts.account_dict[name_input].card_no:
             print("That is not your card no. Please try again. \n")
@@ -194,7 +183,7 @@ def money_transfer():
             Accounts.account_dict[name_input].balance -= money_transfer
             temp.balance += money_transfer
             csv_update()
-            text = "{0} dolars are transfered from your account to {1}"
+            text = "{0} dolars are transfered from your account to {1}."
             print(text.format(money_transfer, target_card_no))
         break
 
@@ -205,6 +194,8 @@ def close_account():
 
         if user_card_no != Accounts.account_dict[name_input].card_no:
             print("That is not your card no. Please try again. \n")
+        elif user_card_no == 0:
+            exit()
         else:
 
             closed = Accounts.account_dict[name_input]
@@ -215,7 +206,7 @@ def close_account():
             csv_update()
 
             print("Your account has been closed.")
-            break
+            exit()
 
 
 main()
