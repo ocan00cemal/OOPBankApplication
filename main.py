@@ -1,6 +1,8 @@
 import csv
 from accounts import Accounts
 import random
+from scraper import dolar, euro
+
 
 file_name = "accounts.txt"
 name_input = ""
@@ -33,13 +35,16 @@ def csv_open_create():
         for row in reader:
             Accounts(row[0], row[1], int(row[2]), int(row[3]))
 
+
 def generate_no():
     global card_no
     card_no = random.randint(100000, 999999)
     return card_no
 
+
 def main():
     first_menu()
+
 
 def first_menu():
     global name_input
@@ -51,6 +56,7 @@ def first_menu():
 
         print("1. Create an account\n"
               "2. Log into account\n"
+              "3. Show excange rates\n"
               "0. Exit\n")
 
         main_menu_input = str(input())
@@ -74,38 +80,34 @@ def first_menu():
                 print(text.format(Accounts.account_list[-1].card_no, "\n"))
 
                 second_menu()
-                break
+
 
 
         elif main_menu_input == "2":
 
-            while_breaker = True
-            while while_breaker:
+            while True:
 
                 name_input = str(input("Please write your name: "))
                 pin_input = str(input("Please write pin: "))
-
-                check_name_pin = False
 
                 for i in Accounts.account_list:
 
                     if i.name == name_input and i.pin == pin_input:
                         print("\nYou are logged into the account.\n ")
-                        check_name_pin = True
+                        #check_name_pin = True
                         second_menu()
-                        while_breaker = False
-                        break
 
-                if check_name_pin == False:
-                    print("This name and pin pair does not match our records.\n ")
-            break
+                print("This name and pin pair does not match our records.\n ")
 
+        elif main_menu_input == "3":
+            exc_rates() 
 
         elif main_menu_input == "0":
             exit()
 
         else:
             print("Please insert 0,1 or 2 : \n")
+
 
 def second_menu():
     while True:
@@ -137,10 +139,18 @@ def second_menu():
         elif scnd_menu_input == "0":
             exit()
 
+
+def exc_rates():
+    print("1 TL = {0} EUR".format(euro))
+    print("1 TL = {0} USD\n".format(dolar))
+
+
+
 def show_balance():
     balance = Accounts.account_dict[name_input].balance
     text = "You have {0} dolar(s) in your account.\n"
     print(text.format(balance))
+
 
 def add_income():
 
@@ -149,6 +159,7 @@ def add_income():
     text = "{0} dolars are added to your account. New balance is {1} dolars.\n"
     print(text.format(add_money_amount, Accounts.account_dict[name_input].balance))
     csv_update()
+
 
 def money_transfer():
     while True:
@@ -187,9 +198,9 @@ def money_transfer():
             print(text.format(money_transfer, target_card_no))
         break
 
+
 def close_account():
     while True:
-
         user_card_no = int(input("Please insert the card no of yourself: "))
 
         if user_card_no != Accounts.account_dict[name_input].card_no:
